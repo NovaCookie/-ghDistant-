@@ -1,0 +1,32 @@
+#!/bin/bash
+# Ce script est exécuté avant chaque commit, dans .git/hooks/pre-commit
+
+echo "Hook pre-commit exécuté"  # Message de test
+
+# Le répertoire où sera créé le fichier commitInfo.txt
+DIR="suivi"
+
+# On demande si l'utilisateur veut créé une note
+read -p "Ajouter une note au commit (commit vérifié le) ? (y/[n]) " yn < /dev/tty
+yn=${yn:-n}  # Si l'utilisateur n'entre rien, on suppose 'n'
+
+case $yn in
+  [Yy]* )
+    # On vérifie que le répertoire 'suivi' existe puis on ajoute la note dedans si il existe
+    if [ -d "$DIR" ]; then
+      echo "commit vérifié le $(date)" > "$DIR/commitInfo.txt"
+      git add "$DIR/commitInfo.txt"  
+    else
+      echo "Le répertoire '$DIR' n'existe pas. Veuillez créer le repertoire '$DIR', Aucun fichier créé."
+    fi
+    ;;
+  [Nn]* )
+    # Si 'n' est choisi, on ne fait rien
+    ;;
+  *)
+    # Si une réponse invalide est donnée, on affiche le message ci-dessous
+    echo "Réponse invalide. Aucun fichier créé."
+    ;;
+esac
+
+exit 0
